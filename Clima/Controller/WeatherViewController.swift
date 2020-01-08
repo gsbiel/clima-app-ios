@@ -15,9 +15,12 @@ class WeatherViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var cityLabel: UILabel!
     @IBOutlet weak var searchTextField: UITextField!
     
+    var weatherManager = WeatherManager()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        
         searchTextField.delegate = self
     }
 
@@ -31,7 +34,6 @@ class WeatherViewController: UIViewController, UITextFieldDelegate {
     // A variavel interna textField referencia o UITextField que recebeu interacao do usuario!
     func textFieldShouldReturn(_ textField : UITextField) -> Bool {
         textField.endEditing(true)
-        print(textField.text!)
         return true
     }
     
@@ -46,6 +48,10 @@ class WeatherViewController: UIViewController, UITextFieldDelegate {
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
+        
+        if let city = searchTextField.text {
+            weatherManager.fetchWeather(city)
+        }
         textField.text = ""
     }
     
