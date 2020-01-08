@@ -12,7 +12,7 @@ let appid = "b637e2f34ebe3de4456fe8f6a71e83cf"
 
 struct WeatherManager {
     
-    let weatherURL = "http://api.openweathermap.org/data/2.5/weather?appid=\(appid)&units=metric"
+    let weatherURL = "https://api.openweathermap.org/data/2.5/weather?appid=\(appid)&units=metric"
     
     func fetchWeather(_ cityName: String){
         let urlString = "\(weatherURL)&q=\(cityName)"
@@ -27,7 +27,7 @@ struct WeatherManager {
             let session = URLSession(configuration: .default)
             
             // 3. Designando uma task para a sessao criada
-            let task = session.dataTask(with: url, completionHandler: <#T##(Data?, URLResponse?, Error?) -> Void#>)
+            let task = session.dataTask(with: url, completionHandler: handle(data:response:error:))
             
             // 4. Iniciar a task
             task.resume()
@@ -36,7 +36,16 @@ struct WeatherManager {
     }
     
     func handle(data : Data?, response : URLResponse?, error : Error? ){
-        
+        if error != nil {
+            print(error!)
+            return
+        }
+        else{
+            if let safeData = data {
+                let dataString = String(data: safeData, encoding: .utf8)
+                print(dataString!) 
+            }
+        }
     }
     
 }
