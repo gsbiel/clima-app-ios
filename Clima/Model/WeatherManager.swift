@@ -11,7 +11,8 @@ import Foundation
 let appid = "b637e2f34ebe3de4456fe8f6a71e83cf"
 
 protocol WeatherManagerDelegate {
-    func didUpdateWeather(weather : WeatherModel)
+    func didUpdateWeather(_ weatherManager: WeatherManager, weather: WeatherModel)
+    func didFailWithError(error : Error)
 }
 
 struct WeatherManager {
@@ -22,10 +23,10 @@ struct WeatherManager {
     
     func fetchWeather(_ cityName: String){
         let urlString = "\(weatherURL)&q=\(cityName)"
-        performRequest(urlString: urlString)
+        performRequest(with: urlString)
     }
     
-    func performRequest(urlString : String){
+    func performRequest(with urlString : String){
         // 1. Criando uma URL
         if let url = URL(string: urlString){
             
@@ -36,14 +37,14 @@ struct WeatherManager {
             // Notacao de clojure!
             let task = session.dataTask(with: url) { (data,response,error) in
                 if error != nil {
-                    print(error!)
+                    self.delegate?.didFailWithError(error: error!)
                     return
                 }
                 else{
                     if let safeData = data {
                         // parseJSON e uma funcao da classe WeatherManager e esta sendo invocada dentro de um clojure. Nessa situacao temos que explicitamente dizer que o metodo parseJSON pertence a essa classe.
-                        if let weather = self.parseJSON(weatherData: safeData) {
-                            self.delegate?.didUpdateWeather(weather: weather)
+                        if let weather = self.parseJSON(safeData) {
+                            self.delegate?.didUpdateWeather(self, weather: weather)
                         }
                     }
                 }
@@ -54,7 +55,7 @@ struct WeatherManager {
         }
     }
     
-    func parseJSON(weatherData : Data) -> WeatherModel? {
+    func parseJSON(_ weatherData : Data) -> WeatherModel? {
         // Criamos a instancia de um decodificador JSON
         let decoder = JSONDecoder()
         do{
@@ -70,7 +71,7 @@ struct WeatherManager {
             return weather
             
         }catch {
-            print(error)
+            self.delegate?.didFailWithError(error: error)
             return nil
         }
     }

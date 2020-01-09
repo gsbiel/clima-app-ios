@@ -56,10 +56,16 @@ class WeatherViewController: UIViewController, UITextFieldDelegate, WeatherManag
         textField.text = ""
     }
     
-    //------------------------------------------------------------------------------------------
-    
-    func didUpdateWeather(weather: WeatherModel){
+    // Protocolo criado por mim. WeatherManagerDelegate
+    func didUpdateWeather(_ weatherManager: WeatherManager, weather: WeatherModel){
         print(weather.temperature)
     }
+    
+    func didFailWithError(error : Error) {
+        print(error)
+    }
+    
+    //------------------------------------------------------------------------------------------
+    
 }
 
