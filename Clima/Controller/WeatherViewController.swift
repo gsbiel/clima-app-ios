@@ -58,7 +58,10 @@ class WeatherViewController: UIViewController, UITextFieldDelegate, WeatherManag
     
     // Protocolo criado por mim. WeatherManagerDelegate
     func didUpdateWeather(_ weatherManager: WeatherManager, weather: WeatherModel){
-        print(weather.temperature)
+        // Quando os dados do clima que foram buscados na API estiverem prontos, essa funcao sera chamada.
+        DispatchQueue.main.async {
+            self.temperatureLabel.text = weather.temperatureString
+        }
     }
     
     func didFailWithError(error : Error) {
