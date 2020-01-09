@@ -9,7 +9,7 @@
 import Foundation
 
 // Esse Model implementa o struct com as partes do objeto JSON, que a API Weather envia para o app, que queremos consumir. Para que aconteca a decodificacao, esse struct deve implementar o protocolo Decodable.
-struct WeatherData: Decodable {
+struct WeatherData: Codable {
     let name : String
     let main : Main
     let weather : [Weather]
@@ -17,10 +17,11 @@ struct WeatherData: Decodable {
 
 // Se voce analisar o JSON que API retorna, ele possui um campo main que armazena um objeto com mais propriedades internas, sendo uma delas a propriedade "temp".
 // Para podermos decodificar e consumir essa propriedade, temos que representar o objeto mais externo como um struct, que tambem implementa o protocolo Decodable. E dentro desse struct representamos o atributo "temp"
-struct Main : Decodable {
+struct Main : Codable {
     let temp : Double
 }
 
-struct Weather : Decodable {
+struct Weather : Codable {
     let description : String
+    let id: Int
 }
