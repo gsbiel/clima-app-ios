@@ -8,7 +8,7 @@
 
 import UIKit
 
-class WeatherViewController: UIViewController, UITextFieldDelegate, WeatherManagerDelegate {
+class WeatherViewController: UIViewController {
 
     @IBOutlet weak var conditionImageView: UIImageView!
     @IBOutlet weak var temperatureLabel: UILabel!
@@ -20,19 +20,22 @@ class WeatherViewController: UIViewController, UITextFieldDelegate, WeatherManag
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        
         searchTextField.delegate = self
         weatherManager.delegate = self
     }
+}
 
+
+//MARK: - UITextFieldDelegate
+
+extension WeatherViewController: UITextFieldDelegate {
+    
     @IBAction func searchPressed(_ sender: UIButton) {
         searchTextField.endEditing(true)
         print(searchTextField.text!)
     }
     
     
-    // DELEGATE EVENTS! -----------------------------------------------------------------------
-    // A variavel interna textField referencia o UITextField que recebeu interacao do usuario!
     func textFieldShouldReturn(_ textField : UITextField) -> Bool {
         textField.endEditing(true)
         return true
@@ -56,19 +59,23 @@ class WeatherViewController: UIViewController, UITextFieldDelegate, WeatherManag
         textField.text = ""
     }
     
-    // Protocolo criado por mim. WeatherManagerDelegate
+}
+
+//MARK: - WeatherManagerDelegate
+
+extension WeatherViewController: WeatherManagerDelegate {
+
     func didUpdateWeather(_ weatherManager: WeatherManager, weather: WeatherModel){
         // Quando os dados do clima que foram buscados na API estiverem prontos, essa funcao sera chamada.
         DispatchQueue.main.async {
             self.temperatureLabel.text = weather.temperatureString
+            self.conditionImageView.image = UIImage(systemName: weather.conditionName)
+            self.cityLabel.text = weather.cityName
         }
     }
     
     func didFailWithError(error : Error) {
         print(error)
     }
-    
-    //------------------------------------------------------------------------------------------
-    
 }
 
