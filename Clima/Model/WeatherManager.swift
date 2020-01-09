@@ -27,7 +27,19 @@ struct WeatherManager {
             let session = URLSession(configuration: .default)
             
             // 3. Designando uma task para a sessao criada
-            let task = session.dataTask(with: url, completionHandler: handle(data:response:error:))
+            // Notacao de clojure!
+            let task = session.dataTask(with: url) { (data,response,error) in
+                if error != nil {
+                    print(error!)
+                    return
+                }
+                else{
+                    if let safeData = data {
+                        // parseJSON e uma funcao da classe WeatherManager e esta sendo invocada dentro de um clojure. Nessa situacao temos que explicitamente dizer que o metodo parseJSON pertence a essa classe.
+                        self.parseJSON(weatherData: safeData)
+                    }
+                }
+            }
             
             // 4. Iniciar a task
             task.resume()
@@ -35,17 +47,19 @@ struct WeatherManager {
         }
     }
     
-    func handle(data : Data?, response : URLResponse?, error : Error? ){
-        if error != nil {
-            print(error!)
-            return
-        }
-        else{
-            if let safeData = data {
-                let dataString = String(data: safeData, encoding: .utf8)
-                print(dataString!) 
-            }
+    func parseJSON(weatherData : Data){
+        // Criamos a instancia de um decodificador JSON
+        let decoder = JSONDecoder()
+        do{
+            // Decodificamos o JSON que esta em weatherData, que e do tipo Data.
+            // A decodificacao acontece em cima de um struc que implemente o protocolo "Decode"
+            // Se tudo der certo, o metodo decode vai criar uma instancia do struct com seus atributos preenchidos com os respectivos dados retirados do JSON weatherData.
+            let decodedData = try decoder.decode(WeatherData.self, from: weatherData)
+            print(decodedData.name)
+            print(decodedData.main.temp)
+            print(decodedData.weather[0].description)
+        }catch {
+            print(error)
         }
     }
-    
 }
