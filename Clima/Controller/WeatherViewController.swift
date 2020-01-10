@@ -30,6 +30,10 @@ class WeatherViewController: UIViewController {
         locationManager.requestLocation()
         
     }
+    
+    @IBAction func locationPressed(_ sender: UIButton) {
+        locationManager.requestLocation()
+    }
 }
 
 
@@ -92,10 +96,12 @@ extension WeatherViewController: CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.last {
+            // O metodo locationManage/didUpdatedLocations so e chamado quando a localizacao do aparelho muda. Se o aparelho ficar sempre na mesma localizacao, esse metodo nao e chamado pois nunca havera nada a atualizar. O problema e que o clima muda mesmo com o aparelho no mesmo local, entao, queremos que esse metodo seja chamado sempre que uma requisicao for feita ao GPS, pelo metodo requestLocation().
+            // Para fazer isso, basta invocar a funcao a seguir.
+            locationManager.stopUpdatingLocation()
             let lat = location.coordinate.latitude
             let lon = location.coordinate.longitude
-            print(lat)
-            print(lon)
+            weatherManager.fetchWeather(latitude: lat, longitude: lon)
         }
     }
     
